@@ -7,6 +7,8 @@ import 'dart:async';
 
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
+import '../scramblers.dart';
+
 class TimerScreen extends StatefulWidget {
   const TimerScreen({Key? key}) : super(key: key);
 
@@ -32,7 +34,7 @@ class _TimerScreenState extends State<TimerScreen> {
     super.initState();
     time = 0.00;
     readyState = "not ready";
-    scramble = generateRandom333();
+    scramble = newScramble(indexFromEvent[event]);
   }
 
   void stopTimer() {
@@ -64,6 +66,8 @@ class _TimerScreenState extends State<TimerScreen> {
       onTap: () {
         if (timing) {
           stopTimer();
+          solves.add((duration.inMilliseconds * 0.001).toStringAsFixed(2));
+
           setState(() {
             scramble = generateRandom333();
           });
@@ -77,14 +81,14 @@ class _TimerScreenState extends State<TimerScreen> {
         }
       },
 
-      onHorizontalDragStart: (DragStartDetails) {
+      onHorizontalDragEnd: (dragEndDetails) {
         setState(() {
-          scramble = generateRandom333();
+          scramble = newScramble(indexFromEvent[event]);
         });
       },
 
       onDoubleTap: () {
-
+        _showPenaltyPopup(context);
       },
 
       onLongPressStart: (LongPressStartDetails details) { setState(() {
@@ -173,7 +177,7 @@ class _TimerScreenState extends State<TimerScreen> {
             children: [
               Container(
                   margin: EdgeInsets.only(right: 20),
-                  child: IconButton(onPressed: () {}, icon: Icon(Icons.grid_view), iconSize: 30, color: Colors.white, splashColor: Colors.transparent, highlightColor: Colors.transparent)
+                  child: IconButton(onPressed: () {}, icon: Icon(Icons.timer), iconSize: 30, color: Colors.white, splashColor: Colors.transparent, highlightColor: Colors.transparent)
               ),
               Container(
                   child: IconButton(onPressed: () {}, icon: Icon(Icons.format_list_bulleted_outlined), iconSize: 30, color: Colors.grey, splashColor: Colors.transparent, highlightColor: Colors.transparent)
@@ -323,7 +327,7 @@ class _TimerScreenState extends State<TimerScreen> {
                 if (enterTimeMode == 0) {
                   enterTimeIcon = Icons.touch_app_rounded;
                 } else if (enterTimeMode == 1) {
-                  enterTimeIcon = Icons.keyboard_alt;
+                  enterTimeIcon = Icons.keyboard;
                 } else {
                   enterTimeIcon = Icons.bluetooth;
                 }
@@ -363,5 +367,28 @@ class _TimerScreenState extends State<TimerScreen> {
                 },
               ),
             ));
+  }
+
+  Future<void> _showPenaltyPopup(BuildContext context) {
+    return showCupertinoModalPopup(
+        context: context,
+        builder: (_) => CupertinoActionSheet(
+          title: const Text('Apply penalty'),
+          actions: <CupertinoActionSheetAction>[
+            CupertinoActionSheetAction(
+              child: const Text('+2'),
+              onPressed: () {
+
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: const Text('DNF'),
+              onPressed: () {
+
+              },
+            )
+          ],
+        ),
+    );
   }
 }

@@ -18,6 +18,8 @@ Map<int, String> indexFromEvent = {
   10 : "Megaminx",
 };
 
+var solves = [];
+
 void main() {
   runApp(App());
 }
