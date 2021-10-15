@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cube_timer/main.dart';
 import 'package:cube_timer/scramblers.dart';
+import 'package:cube_timer/screens/time_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -69,7 +70,7 @@ class _TimerScreenState extends State<TimerScreen> {
           solves.add((duration.inMilliseconds * 0.001).toStringAsFixed(2));
 
           setState(() {
-            scramble = generateRandom333();
+            scramble = newScramble(indexFromEvent[event]);
           });
         }
 
@@ -180,7 +181,15 @@ class _TimerScreenState extends State<TimerScreen> {
                   child: IconButton(onPressed: () {}, icon: Icon(Icons.timer), iconSize: 30, color: Colors.white, splashColor: Colors.transparent, highlightColor: Colors.transparent)
               ),
               Container(
-                  child: IconButton(onPressed: () {}, icon: Icon(Icons.format_list_bulleted_outlined), iconSize: 30, color: Colors.grey, splashColor: Colors.transparent, highlightColor: Colors.transparent)
+                  child: IconButton(onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) => TimeListScreen(),
+                        transitionDuration: Duration(seconds: 0),
+                      ),
+                    );
+                  }, icon: Icon(Icons.format_list_bulleted_outlined), iconSize: 30, color: Colors.grey, splashColor: Colors.transparent, highlightColor: Colors.transparent)
               ),
               Container(
                   margin: EdgeInsets.only(left: 20),
@@ -362,8 +371,10 @@ class _TimerScreenState extends State<TimerScreen> {
                   Text('Megaminx'),
                 ],
                 onSelectedItemChanged: (value) {
-                  event = value;
-                  setState(() {});
+                  setState(() {
+                     event = value;
+                    //scramble = newScramble(newScramble(indexFromEvent[event]));
+                  });
                 },
               ),
             ));
